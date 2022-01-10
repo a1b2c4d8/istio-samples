@@ -18,25 +18,21 @@ package application.rest;
 import java.io.StringReader;
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Invocation;
-import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.client.ResponseProcessingException;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 @Path("/")
-public class LibertyRestEndpoint extends Application {
+public class RestEndpoint {
 
     private final static Boolean ratings_enabled = Boolean.valueOf(System.getenv("ENABLE_RATINGS"));
     private final static String star_color = System.getenv("STAR_COLOR") == null ? "black" : System.getenv("STAR_COLOR");
@@ -62,7 +58,7 @@ public class LibertyRestEndpoint extends Application {
         }
       }
     	result += "},";
-    	
+
     	// reviewer 2:
     	result += "{";
     	result += "  \"reviewer\": \"Reviewer2\",";
@@ -76,19 +72,16 @@ public class LibertyRestEndpoint extends Application {
         }
       }
     	result += "}";
-    	
+
     	result += "]";
     	result += "}";
 
     	return result;
     }
-    
+
     private JsonObject getRatings(String productId, String user, String useragent, String xreq, String xtraceid, String xspanid,
                                   String xparentspanid, String xsampled, String xflags, String xotspan){
       ClientBuilder cb = ClientBuilder.newBuilder();
-      String timeout = star_color.equals("black") ? "10000" : "2500";
-      cb.property("com.ibm.ws.jaxrs.client.connection.timeout", timeout);
-      cb.property("com.ibm.ws.jaxrs.client.receive.timeout", timeout);
       Client client = cb.build();
       WebTarget ratingsTarget = client.target(ratings_service + "/" + productId);
       Invocation.Builder builder = ratingsTarget.request(MediaType.APPLICATION_JSON);
@@ -167,7 +160,7 @@ public class LibertyRestEndpoint extends Application {
             }
           }
         }
-      } 
+      }
 
       String jsonResStr = getJsonResponse(Integer.toString(productId), starsReviewer1, starsReviewer2);
       return Response.ok().type(MediaType.APPLICATION_JSON).entity(jsonResStr).build();

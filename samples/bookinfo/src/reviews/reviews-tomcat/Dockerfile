@@ -12,13 +12,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-FROM websphere-liberty:19.0.0.4-javaee8
+FROM tomcat:10.0.14-jdk17-openjdk-bullseye
 
-ENV SERVERDIRNAME reviews
+ADD ./servers/apps/reviews-application-1.0.war /usr/local/tomcat/webapps.dist/
 
-ADD ./servers/LibertyProjectServer /opt/ibm/wlp/usr/servers/defaultServer/
+RUN sed -i 's/8080/9080/g' /usr/local/tomcat/conf/server.xml
 
-RUN /opt/ibm/wlp/bin/installUtility install  --acceptLicense /opt/ibm/wlp/usr/servers/defaultServer/server.xml
+RUN ln -s /usr/local/tomcat/webapps.dist/reviews-application-1.0.war /usr/local/tomcat/webapps/ROOT.war
 
 ARG service_version
 ARG enable_ratings
@@ -27,4 +27,6 @@ ENV SERVICE_VERSION ${service_version:-v1}
 ENV ENABLE_RATINGS ${enable_ratings:-false}
 ENV STAR_COLOR ${star_color:-black}
 
-CMD /opt/ibm/wlp/bin/server run defaultServer
+EXPOSE 9080
+
+CMD ["catalina.sh", "run"]

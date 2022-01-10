@@ -16,30 +16,35 @@
 
 set -o errexit
 
-if [ "$#" -ne 1 ]; then
-    echo Missing version parameter
-    echo Usage: build_push_update_images.sh \<version\>
-    exit 1
-fi
+#if [ "$#" -ne 1 ]; then
+#    echo Missing version parameter
+#    echo Usage: build_push_update_images.sh \<version\>
+#    exit 1
+#fi
 
-VERSION=$1
+PREFIX=rsdkna58
+VERSION=1.15.0
 
 #Build docker images
-src/build-services.sh "${VERSION}"
+src/build-services.sh "${PREFIX}" "${VERSION}"
 
-#get all the new image names and tags
-for v in ${VERSION} "latest"
-do
-  IMAGES+=$(docker images -f reference=istio/examples-bookinfo*:"$v" --format "{{.Repository}}:$v")
-  IMAGES+=" "
+##get all the new image names and tags
+#for v in ${VERSION} lastest
+#do
+#  IMAGES+=$(docker images -f reference="$PREFIX/examples-tomcat-bookinfo-reviews-*:$v" --format "{{.Repository}}:$v")
+#  IMAGES+=" "
+#done
+#
+#for IMAGE in ${IMAGES} ; do
+#  echo "$IMAGE"
 done
 
 #push images
-for IMAGE in ${IMAGES}; 
-do 
-  echo "Pushing: ${IMAGE}" 
-  docker push "${IMAGE}"; 
-done
+#for IMAGE in ${IMAGES};
+#do
+#  echo "Pushing: ${IMAGE}"
+#  docker push "${IMAGE}"
+#done
 
 #Update image references in the yaml files
-find . -name "*bookinfo*.yaml" -exec sed -i.bak "s/\\(istio\\/examples-bookinfo-.*\\):[[:digit:]]*\\.[[:digit:]]*\\.[[:digit:]]*/\\1:$VERSION/g" {} +
+#find . -name "*bookinfo*.yaml" -exec sed -i.bak "s/\\(soloio\\/examples-tomcat-bookinfo-.*\\):[[:digit:]]*\\.[[:digit:]]*\\.[[:digit:]]*/\\1:$VERSION/g" {} +

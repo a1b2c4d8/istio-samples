@@ -1,3 +1,9 @@
+# gradle
 .gradle
+gradle/
+
+# maven
 reviews-application/build/
-reviews-wlpcfg/servers/LibertyProjectServer/apps/
+reviews-application/target/
+
+reviews-tomcat/servers/apps/
